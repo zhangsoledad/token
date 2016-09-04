@@ -1,0 +1,23 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Token - Default Truffle App</title>
+  <link href="./app.css" rel='stylesheet' type='text/css'>
+  <script src="./app.js"></script>
+</head>
+<body>
+  <h1>Token</h1>
+  <h2>Truffle Dapp</h2>
+  <h3>You have <span class="black"><span id="balance"></span> Token</span></h3>
+
+  <br>
+  <h1>Deploy</h1>
+  <br><label for="supply">supply:</label><input type="text" id="supply" placeholder="e.g., 1000000000"></input>
+  <br><label for="name">name:</label><input type="text" id="name" placeholder="e.g., MetaCoin"></input>
+  <br><br><button id="send" onclick="deployToken()">Deploy Token</button>
+  <br><br>
+  <span id="status"></span>
+</body>
+</html>
