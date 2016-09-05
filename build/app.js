@@ -6326,7 +6326,7 @@ var Web3 = require("web3");
       }
     ],
     "unlinked_binary": "0x606060405260405161051638038061051683398101604052805160805190910160008281556001805483519282905290916020601f60026000196101008688161502019094169390930483018190047fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf69081019390918601908390106100e857805160ff19168380011785555b506100a89291505b808211156101185760008155600101610094565b505060028054600160a060020a031916331790819055600160a060020a0316600090815260036020526040902082905550506103fa8061011c6000396000f35b8280016001018555821561008c579182015b8281111561008c5782518260005055916020019190600101906100fa565b509056606060405236156100615760e060020a600035046306fdde038114610063578063095ea7b3146100c057806318160ddd1461013557806323b872dd1461014a57806370a0823114610237578063a9059cbb14610257578063dd62ed3e146102fe575b005b60408051600180546020600282841615610100026000190190921691909104601f810182900482028401820190945283835261033293908301828280156103df5780601f106103b4576101008083540402835291602001916103df565b6103a060043560243533600160a060020a03908116600081815260046020908152604080832094871680845294825280832086905580518681529051929493927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925929181900390910190a35060015b92915050565b60005b60408051918252519081900360200190f35b6103a0600435602435604435600160a060020a03831660009081526003602052604081205482901080159061019d575060046020908152604080832033600160a060020a03168452909152812054829010155b80156101a95750600082115b156103e757600160a060020a03838116600081815260036020908152604080832080548801905588851680845281842080548990039055600483528184203390961684529482529182902080548790039055815186815291519293927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9281900390910190a35060016103eb565b600160a060020a0360043516600090815260036020526040902054610138565b6103a060043560243533600160a060020a03166000908152600360205260408120548290108015906102895750600082115b156103f25733600160a060020a03908116600081815260036020908152604080832080548890039055938716808352918490208054870190558351868152935191937fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef929081900390910190a350600161012f565b610138600435602435600160a060020a0382811660009081526004602090815260408083209385168352929052205461012f565b60405180806020018281038252838181518152602001915080519060200190808383829060006004602084601f0104600302600f01f150905090810190601f1680156103925780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b604080519115158252519081900360200190f35b820191906000526020600020905b8154815290600101906020018083116103c257829003601f168201915b505050505081565b5060005b9392505050565b50600061012f56",
-    "updated_at": 1472974754733,
+    "updated_at": 1473046236431,
     "links": {},
     "address": "0xc9f09e4222e86870ae8c6089273c0002e4b88e03"
   }
@@ -43396,47 +43396,67 @@ window.addEventListener('load', function() {
 
  
 
-var accounts;
-var account;
+var issuer;
+var transfer_to;
+var tx_adrees;
+var token;
 
-function setStatus(message) {
-  var status = document.getElementById("status");
+function setStatus(id, message) {
+  var status = document.getElementById(id);
   status.innerHTML = message;
 };
 
-function refreshBalance(address) {
-  var token = Token.at(address);
-  token.balanceOf.call(account, {from: account}).then(function(value) {
+function queryBalance() {
+  var query_adress = document.getElementById("query_adress").value;
+  token.balanceOf.call(query_adress, {from: query_adress}).then(function(value) {
     var balance_element = document.getElementById("balance");
     console.log(value.valueOf());
     balance_element.innerHTML = value.valueOf();
   }).catch(function(e) {
     console.log(e);
-    setStatus("Error getting balance; see log.");
   });
 };
 
+function transferToken() {
+  if (!tx_adrees) {
+    alert("Deploy first");
+    return;
+  } else {
+    var transfer_to = document.getElementById("transfer_to").value;
+    var transfer_from = document.getElementById("transfer_from").value;
+    var amount = parseInt(document.getElementById("amount").value);
+    token.transfer(transfer_to, amount, {from: transfer_from}).then(function(value) {
+      setStatus("transfer-status", "transfer success:" + amount);
+    }).catch(function(err) {
+      console.log("ERROR! " + err.message);
+    });
+  }
+};
+
 function deployToken() {
+  issuer = document.getElementById("issuer").value;
   var supply = parseInt(document.getElementById("supply").value);
   var name = document.getElementById("name").value;
   var contract = web3.eth.contract(Token.abi);
   var code = Token.unlinked_binary;
   var gas = web3.eth.estimateGas({
-    from: account,
+    from: issuer,
     data: code
   });
   console.log(gas);
   contract.new(supply, name, {
     data: code,
-    gas: 1000000, //estimateGas has problem
-    from: account},
+    gas: gas * 1.5, //estimateGas has problem
+    from: issuer},
     function(err, myContract){
       if(!err) {
         if(!myContract.address) {
           console.log(myContract.transactionHash)
         } else {
           console.log(myContract.address)
-          refreshBalance(myContract.address);
+          tx_adrees = myContract.address;
+          token = Token.at(tx_adrees);
+          setStatus("deploy-status", "Contract deployed adress:" + tx_adrees);
         }
       } else {
         console.log(err);
@@ -43455,8 +43475,6 @@ window.onload = function() {
       alert("Couldn't get any accounts! Make sure your Ethereum client is configured correctly.");
       return;
     }
-    accounts = accs;
-    account = accounts[0];
   });
 
 }

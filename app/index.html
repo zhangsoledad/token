@@ -8,14 +8,37 @@
 <body>
   <h1>Token</h1>
   <h2>Truffle Dapp</h2>
-  <h3>You have <span class="black"><span id="balance"></span> Token</span></h3>
+  <br>
+
 
   <br>
   <h1>Deploy</h1>
-  <br><label for="supply">supply:</label><input type="text" id="supply" placeholder="e.g., 1000000000"></input>
+  <br><label for="supply">supply:</label><input type="number" id="supply" placeholder="e.g., 1000000000"></input>
   <br><label for="name">name:</label><input type="text" id="name" placeholder="e.g., MetaCoin"></input>
-  <br><br><button id="send" onclick="deployToken()">Deploy Token</button>
+  <br><label for="issuer">issuer:</label><input type="text" id="issuer" placeholder="e.g.,0xb5110c77bee3b18a6bbcafc1e2ee49bac67ee54f"></input>
+  <br><button id="send" onclick="deployToken()">Deploy Token</button>
+  <br>
+  <span id="deploy-status"></span>
   <br><br>
-  <span id="status"></span>
+
+  <h1>Transfer</h1>
+  <br><label for="transfer_from">from:</label><input type="text" id="transfer_from" placeholder="e.g.,0xb5110c77bee3b18a6bbcafc1e2ee49bac67ee54f"></input>
+
+  <br><label for="transfer_to">to:</label><input type="text" id="transfer_to" placeholder="e.g.,0x3ae88fe370c39384fc16da2c9e768cf5d2495b48"></input>
+
+  <br><label for="amount">amount:</label><input type="number" id="amount" placeholder="e.g., 1000000000"></input>
+  <br><button id="transfer" onclick="transferToken()">Transfer</button>
+  <br>
+  <span id="transfer-status"></span>
+  <br><br>
+
+
+  <h1>Balance</h1>
+  <br><label for="query_adress">adress:</label><input type="text" id="query_adress" placeholder="e.g.,0x3ae88fe370c39384fc16da2c9e768cf5d2495b48"></input>
+  <h3>You have <span class="black"><span id="balance"></span> Token</span></h3>
+  <button id="query_balance" onclick="queryBalance()">Query</button>
+  <br><br>
+
+
 </body>
 </html>
